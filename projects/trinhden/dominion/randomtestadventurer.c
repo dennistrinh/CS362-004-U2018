@@ -103,12 +103,12 @@ int checkAdventurer(int x, struct gameState *post) {
 
 int main () {
 
-  printf("\nRandom Test for Smithy Card\n");
+  printf("\nRandom Test for Adventurer Card\n");
   
   // Initialize the game varibles
   int k[10] = {adventurer, council_room, feast, gardens, mine,
 	       remodel, smithy, village, baron, great_hall};
-  int tests = 5000;
+  int tests = 10000;
   struct gameState G;
   int i, j, l, p, treasures;
   int supp[] = {copper, silver, gold};
@@ -120,9 +120,9 @@ int main () {
       ((char*)&G)[i] = floor(Random() * 256);
     }
     p = floor(Random() * MAX_PLAYERS);
-    G.deckCount[p] = floor(Random() * ((MAX_DECK - req) + 1) + req);
-    G.discardCount[p] = floor(Random() * ((MAX_DECK - req) + 1) + req);
-    G.handCount[p] = floor(Random() * ((MAX_HAND - req) + 1) + req);
+    G.deckCount[p] = floor(Random() * (MAX_DECK + req));
+    G.discardCount[p] = floor(Random() * (MAX_DECK + req));
+    G.handCount[p] = floor(Random() * (MAX_HAND + req));
     G.whoseTurn = p;
     treasures = floor(Random() * ((G.deckCount[p] - req) + 1) + req);
     for (l = 0; l < treasures; l++) {

@@ -16,124 +16,124 @@
         -:   11:int failsCount = 0; // Accounts for hand/deck miscount
         -:   12:int failsTreasure = 0; // Accounts for treasure mismatch
         -:   13:
-     5000:   14:int checkAdventurer(int x, struct gameState *post) {
-     5000:   15:  int bonus = 0;
+    10000:   14:int checkAdventurer(int x, struct gameState *post) {
+    10000:   15:  int bonus = 0;
         -:   16:
         -:   17:  // Like testDrawCard, game state variable that allow
         -:   18:  // manual testing of function actions
         -:   19:  struct gameState pre;
-     5000:   20:  memcpy (&pre, post, sizeof(struct gameState));
+    10000:   20:  memcpy (&pre, post, sizeof(struct gameState));
         -:   21:  
         -:   22:  // Call the adventurer card effect
-     5000:   23:  cardEffect(adventurer, 0, 0, 0, post, 0, &bonus);  
+    10000:   23:  cardEffect(adventurer, 0, 0, 0, post, 0, &bonus);  
         -:   24:
         -:   25:  // Break apart the adventurer function into multiple parts
         -:   26:  // It reveals cards until 2 treasure cards are shown.
         -:   27:  // It then discards itself and the cards that are not treasures.
-     5000:   28:  int treasure = 0; // Number of treasures drawn
+    10000:   28:  int treasure = 0; // Number of treasures drawn
         -:   29:  int topCard; // Card drawn
-     5000:   30:  int a = 0;
+    10000:   30:  int a = 0;
         -:   31:  int temp[MAX_HAND];
-    39639:   32:  while (treasure < 2) {
+    76887:   32:  while (treasure < 2) {
         -:   33:    // Shuffle if deck is empty
-    29639:   34:    if (pre.deckCount[x] == 0) {
-    #####:   35:      shuffle(x, &pre);
+    56887:   34:    if (pre.deckCount[x] == 0) {
+      123:   35:      shuffle(x, &pre);
         -:   36:    }
         -:   37:
         -:   38:    // Draw a card
-    29639:   39:    drawCard(x, &pre);
-    29639:   40:    topCard = pre.hand[x][pre.handCount[x] - 1];
+    56887:   39:    drawCard(x, &pre);
+    56887:   40:    topCard = pre.hand[x][pre.handCount[x] - 1];
         -:   41:
         -:   42:    // If treasure is drawn, store it and increment
-    29639:   43:    if (topCard == copper || topCard == silver || topCard == gold) {
-    10000:   44:      treasure++;
+    56887:   43:    if (topCard == copper || topCard == silver || topCard == gold) {
+    20000:   44:      treasure++;
         -:   45:
         -:   46:    // Otherwise, remove the card.
         -:   47:    } else {
-    19639:   48:      temp[a] = topCard;
-    19639:   49:      pre.handCount[x]--;
-    19639:   50:      a++;
+    36887:   48:      temp[a] = topCard;
+    36887:   49:      pre.handCount[x]--;
+    36887:   50:      a++;
         -:   51:    }
         -:   52:  }
         -:   53:  // From the playAdventurer function to discard.
-    29639:   54:  while (a - 1 >= 0) {
-    19639:   55:    pre.discard[x][pre.discardCount[x]++] = temp[a - 1];
-    19639:   56:    a--;
+    56887:   54:  while (a - 1 >= 0) {
+    36887:   55:    pre.discard[x][pre.discardCount[x]++] = temp[a - 1];
+    36887:   56:    a--;
         -:   57:  }  
         -:   58:
         -:   59:  // Hand and deck counts
         -:   60:  // Booleans to determine equality
-     5000:   61:  int handCount = 0;
-     5000:   62:  int deckCount = 0;
+    10000:   61:  int handCount = 0;
+    10000:   62:  int deckCount = 0;
         -:   63:
         -:   64:  // If the counts are equal return true (1)
-     5000:   65:  if (pre.handCount[x] == post->handCount[x]) {
-    #####:   66:    handCount = 1;
+    10000:   65:  if (pre.handCount[x] == post->handCount[x]) {
+       58:   66:    handCount = 1;
         -:   67:  }
-     5000:   68:  if (pre.deckCount[x] == post->deckCount[x]) {
-    #####:   69:    deckCount = 1;
+    10000:   68:  if (pre.deckCount[x] == post->deckCount[x]) {
+       58:   69:    deckCount = 1;
         -:   70:  }
         -:   71:
         -:   72:  // If both true, test is okay. Otherwise, increment fails.
-     5000:   73:  if (handCount == 1 && deckCount == 1) {
+    10000:   73:  if (handCount == 1 && deckCount == 1) {
         -:   74:    //printf("Test success.\n");
         -:   75:  } else {
-     5000:   76:    failsCount++;
+     9942:   76:    failsCount++;
         -:   77:  }
         -:   78:
         -:   79:  // Count the treasure count created by test.
         -:   80:  int i, currentCard;
-     5000:   81:  int preTreasure = 0;
-  1272057:   82:  for (i = 0; i < pre.handCount[x]; i++) {
-  1267057:   83:    currentCard = pre.hand[x][i];
-  1267057:   84:    if (currentCard == copper || currentCard == silver || currentCard == gold) {
-  1017126:   85:      preTreasure++;
+    10000:   81:  int preTreasure = 0;
+  2573346:   82:  for (i = 0; i < pre.handCount[x]; i++) {
+  2563346:   83:    currentCard = pre.hand[x][i];
+  2563346:   84:    if (currentCard == copper || currentCard == silver || currentCard == gold) {
+  2227713:   85:      preTreasure++;
         -:   86:    }
         -:   87:  }
         -:   88:  
         -:   89:  // Count the treasure called by cardEffect
-     5000:   90:  int postTreasure = 0;
-  1277057:   91:  for (i = 0; i < post->handCount[x]; i++) {
-  1272057:   92:    currentCard = post->hand[x][i];
-  1272057:   93:    if (currentCard == copper || currentCard == silver || currentCard == gold) {
-  1022126:   94:      postTreasure++;
+    10000:   90:  int postTreasure = 0;
+  2581297:   91:  for (i = 0; i < post->handCount[x]; i++) {
+  2571297:   92:    currentCard = post->hand[x][i];
+  2571297:   93:    if (currentCard == copper || currentCard == silver || currentCard == gold) {
+  2235837:   94:      postTreasure++;
         -:   95:    }
         -:   96:  }
         -:   97:
         -:   98:  // Compare the two counts
-     5000:   99:  if (preTreasure != postTreasure) {
-     5000:  100:    failsTreasure++;
+    10000:   99:  if (preTreasure != postTreasure) {
+     9942:  100:    failsTreasure++;
         -:  101:  } 
-     5000:  102:}
+    10000:  102:}
         -:  103:
         1:  104:int main () {
         -:  105:
-        1:  106:  printf("\nRandom Test for Smithy Card\n");
+        1:  106:  printf("\nRandom Test for Adventurer Card\n");
         -:  107:  
         -:  108:  // Initialize the game varibles
         1:  109:  int k[10] = {adventurer, council_room, feast, gardens, mine,
         -:  110:	       remodel, smithy, village, baron, great_hall};
-        1:  111:  int tests = 5000;
+        1:  111:  int tests = 10000;
         -:  112:  struct gameState G;
         -:  113:  int i, j, l, p, treasures;
         1:  114:  int supp[] = {copper, silver, gold};
         1:  115:  srand(time(NULL));
         1:  116:  int req = 3; // Required at least 3 cards for adventurer card to work.
         -:  117:  // Randomize the game state
-     5001:  118:  for (i = 0; i < tests; i++) {
-131505000:  119:    for (j = 0; j < sizeof(struct gameState); j++) {
-131500000:  120:      ((char*)&G)[i] = floor(Random() * 256);
+    10001:  118:  for (i = 0; i < tests; i++) {
+263010000:  119:    for (j = 0; j < sizeof(struct gameState); j++) {
+263000000:  120:      ((char*)&G)[i] = floor(Random() * 256);
         -:  121:    }
-     5000:  122:    p = floor(Random() * MAX_PLAYERS);
-     5000:  123:    G.deckCount[p] = floor(Random() * ((MAX_DECK - req) + 1) + req);
-     5000:  124:    G.discardCount[p] = floor(Random() * ((MAX_DECK - req) + 1) + req);
-     5000:  125:    G.handCount[p] = floor(Random() * ((MAX_HAND - req) + 1) + req);
-     5000:  126:    G.whoseTurn = p;
-     5000:  127:    treasures = floor(Random() * ((G.deckCount[p] - req) + 1) + req);
-   644720:  128:    for (l = 0; l < treasures; l++) {
-   639720:  129:      G.deck[p][l] = supp[rand() % 3];
+    10000:  122:    p = floor(Random() * MAX_PLAYERS);
+    10000:  123:    G.deckCount[p] = floor(Random() * (MAX_DECK + req));
+    10000:  124:    G.discardCount[p] = floor(Random() * (MAX_DECK + req));
+    10000:  125:    G.handCount[p] = floor(Random() * (MAX_HAND + req));
+    10000:  126:    G.whoseTurn = p;
+    10000:  127:    treasures = floor(Random() * ((G.deckCount[p] - req) + 1) + req);
+  1287546:  128:    for (l = 0; l < treasures; l++) {
+  1277546:  129:      G.deck[p][l] = supp[rand() % 3];
         -:  130:    }
-     5000:  131:    checkAdventurer(p, &G);
+    10000:  131:    checkAdventurer(p, &G);
         -:  132:  }
         -:  133:  
         -:  134:  // Print out results of random test.
