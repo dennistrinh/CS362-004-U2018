@@ -36,9 +36,17 @@ int checkCouncil(int x, struct gameState *post) {
   int i;
   for (i = 0; i < pre.numPlayers; i++) {
     if (i != x) {
-      if((drawCard(i, &pre)) == -1 && pre.deckCount[i] != 0) {
-        failsOtherPlayer++;
-      }
+      drawCard(i, &pre); 
+    }
+  }
+
+  // Compare the other player hands pre and post game
+  for (i = 0; i < pre.numPlayers; i++) {
+    if (i != x) {
+      if (!(pre.handCount[i] == post->handCount[i] &&
+            pre.deckCount[i] == post->deckCount[i])) {
+              failsOtherPlayer++;
+      } 
     }
   }
 
