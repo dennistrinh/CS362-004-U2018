@@ -108,7 +108,7 @@ int main () {
   // Initialize the game varibles
   int k[10] = {adventurer, council_room, feast, gardens, mine,
 	       remodel, smithy, village, baron, great_hall};
-  int tests = 10000;
+  int tests = 5000;
   struct gameState G;
   int i, j, l, p, treasures;
   int supp[] = {copper, silver, gold};
