@@ -1,0 +1,71 @@
+        -:    0:Source:unittest3.c
+        -:    0:Graph:unittest3.gcno
+        -:    0:Data:unittest3.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include "dominion_helpers.h"
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include "rngs.h"
+        -:    8:
+        -:    9:
+        -:   10:/*********************************************
+        -:   11: * void assertTrue(int, int)
+        -:   12: * This function checks for equality between
+        -:   13: * two values and lets the user know
+        -:   14: * if the test passed or not.
+        -:   15:**********************************************/
+        4:   16:void assertTrue(int x, int y) {
+        4:   17:  if (x == y) {
+        4:   18:    printf("TEST SUCCESSFULLY COMPLETED\n");
+        -:   19:  } else {
+    #####:   20:    printf("TEST FAILED\n");
+    #####:   21:    printf("After: %d | Before: %d\n", x, y);
+        -:   22:  }
+        4:   23:}
+        -:   24:
+        1:   25:int main() {
+        -:   26:  // Declare all the necessary variables
+        1:   27:  int seed = 1111;
+        1:   28:  int numPlayers = 2;
+        1:   29:  int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
+        -:   30:	       sea_hag, tribute, smithy, council_room};
+        -:   31:
+        -:   32:  // Initialize the state
+        -:   33:  struct gameState state;
+        1:   34:  memset(&state, 23, sizeof(struct gameState));
+        -:   35:  
+        -:   36:  // Initialize the game 
+        1:   37:  initializeGame(numPlayers, k, seed, &state);
+        -:   38:
+        -:   39:  // Testing
+        1:   40:  printf("Testing: isGameOver()\n");
+        -:   41:  
+        -:   42:  // Province cards are out, game should end.
+        1:   43:  printf("\nTest: Province cards are out, game is over.\n"); 
+        1:   44:  state.supplyCount[province] = 0;
+        1:   45:  assertTrue(isGameOver(&state), 1);
+        -:   46:
+        -:   47:  // Province cards still in play, game should continue.
+        1:   48:  printf("\nTest: Province cards are okay, supply is fine, game is NOT over.\n"); 
+        1:   49:  state.supplyCount[province] = 1;
+        1:   50:  assertTrue(isGameOver(&state), 0);
+        -:   51:
+        -:   52:  // Three supply are empty, game is over.
+        1:   53:  printf("\nTest: Three supply piles are 0, game is over\n");
+        1:   54:  state.supplyCount[0] = 0;
+        1:   55:  state.supplyCount[1] = 0;
+        1:   56:  state.supplyCount[2] = 0;
+        1:   57:  assertTrue(isGameOver(&state), 1);
+        -:   58:  
+        -:   59:  // Two supply are empty, provinces okay, game should continue.
+        1:   60:  printf("\nTest: Two supply piles empty, provinces okay, game should continue\n");
+        1:   61:  state.supplyCount[0] = 2;
+        1:   62:  assertTrue(isGameOver(&state), 0);
+        -:   63:  
+        1:   64:  return 0;
+        -:   65:
+        -:   66:}

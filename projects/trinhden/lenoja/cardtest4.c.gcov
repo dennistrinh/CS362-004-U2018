@@ -1,0 +1,121 @@
+        -:    0:Source:cardtest4.c
+        -:    0:Graph:cardtest4.gcno
+        -:    0:Data:cardtest4.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include "dominion_helpers.h"
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include "rngs.h"
+        -:    8:
+        -:    9:
+        -:   10:/*********************************************
+        -:   11: * void assertTrue(int, int)
+        -:   12: * This function checks for equality between
+        -:   13: * two values and lets the user know
+        -:   14: * if the test passed or not.
+        -:   15:**********************************************/
+       19:   16:void assertTrue(int x, int y) {
+       19:   17:  if (x == y) {
+       17:   18:    printf("TEST SUCCESSFULLY COMPLETED\n");
+        -:   19:  } else {
+        2:   20:    printf("TEST FAILED\n");
+        2:   21:    printf("After: %d | Before: %d\n", x, y);
+        -:   22:  }
+       19:   23:}
+        -:   24:
+        1:   25:int main() {
+        -:   26:  // Declare all the necessary variables
+        1:   27:  int seed = 1111;
+        1:   28:  int numPlayers = 2;
+        1:   29:  int handpos = 5, choice1 = 0, choice2 = 5, choice3 = 0, bonus = 0;
+        1:   30:  int player1 = 0;
+        1:   31:  int player2 = 1;
+        1:   32:  int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
+        -:   33:	       sea_hag, tribute, smithy, council_room};
+        -:   34:
+        -:   35:  // Records the state before and after a card effect
+        -:   36:  struct gameState before, after;
+        1:   37:  memset(&before, 23, sizeof(struct gameState));
+        1:   38:  memset(&after, 23, sizeof(struct gameState));
+        -:   39:  
+        -:   40:  // Initialize the game and copy the state to "before" 
+        1:   41:  initializeGame(numPlayers, k, seed, &after);
+        1:   42:  memcpy(&before, &after, sizeof(struct gameState));
+        -:   43:
+        -:   44:  // Testing
+        1:   45:  printf("Testing: Mine\n");
+        1:   46:  cardEffect(mine, choice1, choice2, choice3, &after, handpos, &bonus);
+        -:   47:
+        -:   48:  // Check if the player drew 0 cards 
+        1:   49:  printf("\nTest: Player 1 should not have drawn additional cards\n");
+        1:   50:  assertTrue(after.handCount[player1], before.handCount[player1]);
+        -:   51:
+        -:   52:  // Player should have gained a new treasure
+        1:   53:  printf("\nPlayer 1 should have a new treasure (silver).\n");
+        -:   54:  int i, currentCard;
+        1:   55:  int afterC = 0, afterS = 0, afterG = 0;
+        1:   56:  int beforeC = 0, beforeS = 0, beforeG = 0;
+        -:   57:
+        -:   58:  // See how many treasures were gained by mine card
+        5:   59:  for (i = 0; i < after.handCount[player1]; i++) {
+        4:   60:    currentCard = after.hand[player1][i];
+        4:   61:    if (currentCard == copper)
+        3:   62:      afterC++;
+        1:   63:    else if (currentCard == silver)
+    #####:   64:      afterS++;
+        1:   65:    else if (currentCard == gold)
+    #####:   66:      afterG++;	
+        -:   67:  }
+        -:   68:
+        -:   69:  // See how many treasures the player had before mine was played
+        6:   70:  for (i = 0; i < before.handCount[player1]; i++) {
+        5:   71:    currentCard = before.hand[player1][i];
+        5:   72:    if (currentCard == copper) 
+        4:   73:      beforeC++;
+        1:   74:    else if (currentCard == silver)
+    #####:   75:      beforeS++;
+        1:   76:    else if (currentCard == gold)
+    #####:   77:      beforeG++;
+        -:   78:  }
+        -:   79:  
+        1:   80:  printf("Test: Player 1 should have one less copper\n");
+        1:   81:  assertTrue(afterC, beforeC - 1);
+        1:   82:  printf("Test: Player 1 should have one more silver\n");
+        1:   83:  assertTrue(afterS, beforeS + 1);
+        1:   84:  printf("Test: Player 1 should have the same amount of gold\n");
+        1:   85:  assertTrue(afterG, beforeG);
+        -:   86:
+        -:   87:  // Player 2's state should remain unchanged
+        1:   88:  printf("\nPlayer 2 should remain unchanged\n");
+        1:   89:  printf("Test: Player 2's Deck Count\n");
+        1:   90:  assertTrue(after.deckCount[player2], before.deckCount[player2]);
+        1:   91:  printf("Test: Player 2's Hand Count\n");
+        1:   92:  assertTrue(after.handCount[player2], before.handCount[player2]);
+        -:   93:  
+        -:   94:  // The kingdom supply should be unchanged
+        1:   95:  printf("\nThe kingdom supply should be unchanged\n");
+        1:   96:  printf("This should return 10 successful tests\n");
+       11:   97:  for (i = 0; i < 10; i++) {
+       10:   98:    printf("Test %d: ", i);
+       10:   99:    assertTrue(after.supplyCount[k[i]], before.supplyCount[k[i]]);
+        -:  100:  }
+        -:  101:
+        -:  102:  // Victory cards should remain unchanged
+        1:  103:  printf("\nThe victory card supply should remain unchanged\n");
+        -:  104:  // Estate supply
+        1:  105:  printf("Test: Estate quantity\n");
+        1:  106:  assertTrue(after.supplyCount[estate], before.supplyCount[estate]);
+        -:  107:  // Duchy supply
+        1:  108:  printf("Test: Duchy quantity\n");
+        1:  109:  assertTrue(after.supplyCount[duchy], before.supplyCount[duchy]);
+        -:  110:  // Province supply
+        1:  111:  printf("Test: Province quantity\n");
+        1:  112:  assertTrue(after.supplyCount[province], before.supplyCount[province]);
+        -:  113:
+        1:  114:  return 0;
+        -:  115:
+        -:  116:}

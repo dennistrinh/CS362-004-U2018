@@ -1,0 +1,77 @@
+        -:    0:Source:unittest2.c
+        -:    0:Graph:unittest2.gcno
+        -:    0:Data:unittest2.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include "dominion_helpers.h"
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include "rngs.h"
+        -:    8:
+        -:    9:
+        -:   10:/*********************************************
+        -:   11: * void assertTrue(int, int)
+        -:   12: * This function checks for equality between
+        -:   13: * two values and lets the user know
+        -:   14: * if the test passed or not.
+        -:   15:**********************************************/
+        4:   16:void assertTrue(int x, int y) {
+        4:   17:  if (x == y) {
+        4:   18:    printf("TEST SUCCESSFULLY COMPLETED\n");
+        -:   19:  } else {
+    #####:   20:    printf("TEST FAILED\n");
+    #####:   21:    printf("After: %d | Before: %d\n", x, y);
+        -:   22:  }
+        4:   23:}
+        -:   24:
+        1:   25:int main() {
+        -:   26:  // Declare all the necessary variables
+        1:   27:  int seed = 1111;
+        1:   28:  int numPlayers = 2;
+        1:   29:  int player = 0;
+        1:   30:  int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
+        -:   31:	       sea_hag, tribute, smithy, council_room};
+        1:   32:  int handpos = 0;
+        -:   33:
+        -:   34:  // Initialize the state
+        -:   35:  struct gameState state;
+        1:   36:  memset(&state, 23, sizeof(struct gameState));
+        -:   37:  
+        -:   38:  // Initialize the game 
+        1:   39:  initializeGame(numPlayers, k, seed, &state);
+        -:   40:
+        -:   41:  // Testing
+        1:   42:  printf("Testing: discardCard()\n");
+        -:   43:  
+        -:   44:  // If trash flag is inactive, add to played pile
+        1:   45:  printf("\nTest: Trash flag is 0, played card count should increase by 1\n");
+        1:   46:  state.playedCardCount = 0;
+        1:   47:  int before = state.playedCardCount;
+        1:   48:  discardCard(handpos, player, &state, 0);
+        1:   49:  assertTrue(state.playedCardCount, before + 1);
+        -:   50:
+        -:   51:  // If handPos is the last card, decrement hand count
+        1:   52:  handpos = state.handCount[player];
+        1:   53:  discardCard(handpos, player, &state, 1);
+        1:   54:  printf("\nTest: If handpos is the last card, handCount decrements by 1\n");
+        1:   55:  assertTrue(state.handCount[player], handpos - 1);
+        -:   56:  
+        -:   57:  // Otherwise, replace the discarded card with last card in hand
+        1:   58:  handpos = 1;
+        1:   59:  before = state.hand[player][state.handCount[player] - 1];
+        1:   60:  discardCard(handpos, player, &state, 1);
+        1:   61:  printf("\nTest: handpos card is swapped with last card in hand\n");
+        1:   62:  assertTrue(state.hand[player][handpos], before);
+        -:   63:
+        -:   64:  // If there is only one card in the hand, just decrement
+        1:   65:  state.handCount[player] = 1;
+        1:   66:  discardCard(handpos, player, &state, 1);
+        1:   67:  printf("\nTest: One card in hand, should result in no cards after discard\n");
+        1:   68:  assertTrue(state.handCount[player], 0);
+        -:   69:
+        1:   70:  return 0;
+        -:   71:
+        -:   72:}

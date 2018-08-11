@@ -1,0 +1,77 @@
+        -:    0:Source:unittest1.c
+        -:    0:Graph:unittest1.gcno
+        -:    0:Data:unittest1.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include "dominion_helpers.h"
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include "rngs.h"
+        -:    8:
+        -:    9:
+        -:   10:/*********************************************
+        -:   11: * void assertTrue(int, int)
+        -:   12: * This function checks for equality between
+        -:   13: * two values and lets the user know
+        -:   14: * if the test passed or not.
+        -:   15:**********************************************/
+        4:   16:void assertTrue(int x, int y) {
+        4:   17:  if (x == y) {
+        4:   18:    printf("TEST SUCCESSFULLY COMPLETED\n");
+        -:   19:  } else {
+    #####:   20:    printf("TEST FAILED\n");
+    #####:   21:    printf("After: %d | Before: %d\n", x, y);
+        -:   22:  }
+        4:   23:}
+        -:   24:
+        1:   25:int main() {
+        -:   26:  // Declare all the necessary variables
+        1:   27:  int seed = 1111;
+        1:   28:  int numPlayers = 2;
+        1:   29:  int player = 0;
+        1:   30:  int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
+        -:   31:	       sea_hag, tribute, smithy, council_room};
+        -:   32:
+        -:   33:  // Initialize the state
+        -:   34:  struct gameState state;
+        1:   35:  memset(&state, 23, sizeof(struct gameState));
+        -:   36:  
+        -:   37:  // Initialize the game 
+        1:   38:  initializeGame(numPlayers, k, seed, &state);
+        -:   39:
+        -:   40:  // Testing
+        1:   41:  printf("Testing: shuffle()\n");
+        -:   42:  
+        -:   43:  // If player's deck is empty, cannot shuffle returns -1
+        1:   44:  printf("\nTest: If deck is empty, shuffle returns -1\n");
+        1:   45:  state.deckCount[player] = 0;
+        1:   46:  assertTrue(shuffle(player, &state), -1);
+        -:   47:
+        -:   48:  // Shuffling the deck should not affect the count of the discard pile
+        1:   49:  printf("\nTest: Discard pile unchanged after shuffle\n");
+        1:   50:  state.discardCount[player] = 5;
+        1:   51:  shuffle(player, &state);
+        1:   52:  assertTrue(state.discardCount[player], 5);
+        -:   53:
+        -:   54:  // Shuffling the deck should result in the same number of cards in the deck
+        1:   55:  printf("\nTest: Deck has same number of cards after shuffle\n");
+        1:   56:  state.deckCount[player] = 5;
+        1:   57:  shuffle(player, &state);
+        1:   58:  assertTrue(state.deckCount[player], 5);
+        -:   59:
+        -:   60:  // Check for shuffling
+        1:   61:  printf("\nTest: Check to see if cards are shuffled.\n");
+        1:   62:  int before = state.deck[player][2];
+        1:   63:  shuffle(player, &state);
+        1:   64:  int after = state.deck[player][2];
+        1:   65:  if (before != after)
+        1:   66:    assertTrue(0, 0);
+        -:   67:  else
+    #####:   68:    assertTrue(0, 1);
+        -:   69:
+        1:   70:  return 0;
+        -:   71:
+        -:   72:}
