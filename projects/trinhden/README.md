@@ -1,4 +1,5 @@
 # Name: Dennis Trinh
 # ONID: trinhden
 
-# This is my assignment-2 submission!
+# Thank you to Jacob Leno for his dominion code to use for testing. 
+# Lenoja is his code.
